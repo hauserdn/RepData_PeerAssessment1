@@ -51,16 +51,16 @@ data <- read_csv("zipped.zip")
 2. Histogram of the total number of steps taken each day
 
 ```r
-steps <- ggplot(data, aes(steps)) + geom_histogram()
+steps_day <- data %>%
+        group_by(date) %>%
+        summarise(steps_per_day = sum(steps, na.rm = TRUE))
+
+steps <- ggplot(steps_day, aes(steps_per_day)) + geom_histogram()
 steps
 ```
 
 ```
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-```
-
-```
-## Warning: Removed 2304 rows containing non-finite values (stat_bin).
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -70,21 +70,21 @@ steps
 The mean is:
 
 ```r
-mean(data$steps, na.rm = TRUE)
+mean(steps_day$steps_per_day, na.rm = TRUE)
 ```
 
 ```
-## [1] 37.3826
+## [1] 9354.23
 ```
 
 The median is:
 
 ```r
-median(data$steps, na.rm =TRUE)
+median(steps_day$steps_per_day, na.rm =TRUE)
 ```
 
 ```
-## [1] 0
+## [1] 10395
 ```
 
 ##What is the average daily activity pattern?
@@ -156,7 +156,10 @@ imp_data <- (data %>%
 7. Histogram of the total number of steps taken each day after missing values are imputed
 
 ```r
-imp_hist <- ggplot(imp_data, aes(steps)) + geom_histogram() 
+imp_steps_day <- imp_data %>%
+        group_by(date) %>%
+        summarise(steps_per_day = sum(steps, na.rm = TRUE))
+imp_hist <- ggplot(imp_steps_day, aes(steps_per_day)) + geom_histogram() 
 imp_hist
 ```
 
@@ -169,24 +172,22 @@ imp_hist
 The mean steps steps per day including imputed data is:
 
 ```r
-mean(imp_data$steps)
+mean(imp_steps_day$steps_per_day)
 ```
 
 ```
-## [1] 37.3826
+## [1] 10766.19
 ```
 
 The median steps per day including imputed data is:
 
 ```r
-median(imp_data$steps)
+median(imp_steps_day$steps_per_day)
 ```
 
 ```
-## [1] 0
+## [1] 10766.19
 ```
-
-These values do not differ from the estimates in the first part of the assignment.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
